@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/screens/product_details_screen.dart';
+import 'package:provider/provider.dart';
 
-import '../models/product.dart';
+import '../providers/product.dart';
+
+import '../screens/product_details_screen.dart';
 
 class ProductItem extends StatelessWidget {
-  final Product product;
-
-  const ProductItem(this.product, {Key? key}) : super(key: key);
+  const ProductItem({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final product = Provider.of<Product>(context);
+
     return Card(
       clipBehavior: Clip.antiAlias,
       elevation: 3,
@@ -18,8 +20,10 @@ class ProductItem extends StatelessWidget {
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.favorite),
+            onPressed: product.toggleFavoriteStatus,
+            icon: Icon(
+              product.isFavorite ? Icons.favorite : Icons.favorite_border,
+            ),
           ),
           title: Text(
             product.title,

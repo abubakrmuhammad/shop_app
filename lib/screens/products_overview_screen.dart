@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../data.dart';
-
+import '../providers/products.dart';
 import '../widgets/product_item.dart';
 
 class ProductOverviewScreen extends StatelessWidget {
   static const routeName = '/products';
 
-  final products = dummyProducts;
-
-  ProductOverviewScreen({Key? key}) : super(key: key);
+  const ProductOverviewScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final products = Provider.of<Products>(context).products;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shop'),
@@ -26,7 +26,10 @@ class ProductOverviewScreen extends StatelessWidget {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
-        itemBuilder: (ctx, i) => ProductItem(products[i]),
+        itemBuilder: (ctx, i) => ChangeNotifierProvider(
+          create: (ctx) => products[i],
+          child: const ProductItem(),
+        ),
       ),
     );
   }
