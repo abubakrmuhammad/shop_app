@@ -22,9 +22,10 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.indigo,
           fontFamily: 'Lato',
         ),
-        home: ProductOverviewScreen(),
+        home: const ProductOverviewScreen(),
         routes: {
-          ProductOverviewScreen.routeName: (ctx) => ProductOverviewScreen(),
+          ProductOverviewScreen.routeName: (ctx) =>
+              const ProductOverviewScreen(),
           ProductDetailsScreen.routeName: (ctx) => const ProductDetailsScreen(),
         },
       ),

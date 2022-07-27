@@ -10,6 +10,9 @@ class Products with ChangeNotifier {
 
   UnmodifiableListView<Product> get products => UnmodifiableListView(_products);
 
+  UnmodifiableListView<Product> get favoriteProducts =>
+      UnmodifiableListView(_products.where((p) => p.isFavorite));
+
   Product findById(String id) {
     return _products.firstWhere((product) => product.id == id);
   }
