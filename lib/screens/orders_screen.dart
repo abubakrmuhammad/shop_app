@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/orders.dart';
+import 'package:shop_app/widgets/main_drawer.dart';
 
 class OrdersScreen extends StatelessWidget {
   static const routeName = '/orders';
@@ -16,6 +17,7 @@ class OrdersScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Your Orders'),
       ),
+      drawer: const MainDrawer(),
       body: Container(
         child: ListView.builder(
           itemCount: orders.length,

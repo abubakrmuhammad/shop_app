@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/widgets/main_drawer.dart';
 
 import '../providers/cart.dart';
 import '../screens/cart_screen.dart';
@@ -57,6 +58,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                   ])
         ],
       ),
+      drawer: const MainDrawer(),
       body: ProductsGrid(showFavsOnly),
     );
   }
