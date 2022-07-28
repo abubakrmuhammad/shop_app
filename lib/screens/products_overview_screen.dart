@@ -29,7 +29,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         actions: [
           Consumer<Cart>(
             builder: (context, value, child) => Badge(
-              value: value.itemCount.toString(),
+              value: value.totalProductsAdded.toString(),
               color: Colors.deepOrange,
               child: child!,
             ),
