@@ -19,6 +19,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  var _initialValues = {
+    'title': '',
+    'price': '',
+    'description': '',
+    'imageUrl': ''
+  };
+
+  bool _isInit = true;
+
   Product _editedProduct = Product.withDefualtProps();
 
   @override
@@ -26,6 +35,30 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _imageUrlFocusNode.addListener(_updateImageUrl);
 
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context)?.settings.arguments as String?;
+
+      if (productId != null) {
+        _editedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+
+        _initialValues = {
+          'title': _editedProduct.title,
+          'price': _editedProduct.price.toString(),
+          'description': _editedProduct.description,
+          'imageUrl': '',
+        };
+
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+
+    _isInit = true;
+    super.didChangeDependencies();
   }
 
   @override
@@ -57,15 +90,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     _formKey.currentState?.save();
 
-    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    if (_editedProduct.id.isEmpty) {
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    } else {
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
+    }
+
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
+    final productId = ModalRoute.of(context)?.settings.arguments as String?;
+    final isEditForm = productId != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Product'),
+        title: Text(isEditForm ? 'Edit Product' : 'Add Product'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
@@ -76,6 +118,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 TextFormField(
+                  initialValue: _initialValues['title'],
                   decoration: const InputDecoration(labelText: 'Title'),
                   textInputAction: TextInputAction.next,
                   validator: (value) {
@@ -95,6 +138,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                 ),
                 TextFormField(
+                  initialValue: _initialValues['price'],
                   decoration: const InputDecoration(labelText: 'Price'),
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
@@ -123,6 +167,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                 ),
                 TextFormField(
+                  initialValue: _initialValues['description'],
                   decoration: const InputDecoration(labelText: 'Description'),
                   keyboardType: TextInputType.multiline,
                   maxLines: 2,
@@ -193,7 +238,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: _submitHandler,
-                  child: const Text('Add Product'),
+                  child: Text(isEditForm ? 'Update Product' : 'Add Product'),
                 ),
               ],
             ),
