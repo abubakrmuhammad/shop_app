@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/screens/auth_screen.dart';
 
 import './providers/products.dart';
 import './providers/cart.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.indigo,
           fontFamily: 'Lato',
         ),
-        home: const ProductOverviewScreen(),
+        home: const AuthScreen(),
         routes: {
           ProductOverviewScreen.routeName: (ctx) =>
               const ProductOverviewScreen(),
