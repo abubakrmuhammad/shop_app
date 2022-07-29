@@ -11,6 +11,10 @@ const _baseUrl =
 
 class Products with ChangeNotifier {
   List<Product> _products = [];
+  final String? _authToken;
+
+  Products() : _authToken = null;
+  Products.update(this._authToken, this._products);
 
   UnmodifiableListView<Product> get products => UnmodifiableListView(_products);
 
@@ -22,7 +26,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse('$_baseUrl.json');
+    final url = Uri.parse('$_baseUrl.json?auth=$_authToken');
 
     try {
       final res = await http.get(url);
@@ -52,8 +56,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final url = Uri.parse(
-        "https://shop-app-flutterino-default-rtdb.europe-west1.firebasedatabase.app/products.json");
+    final url = Uri.parse('$_baseUrl.json?auth=$_authToken');
     final productJson = json.encode(Product.toMap(product));
 
     try {
@@ -75,7 +78,7 @@ class Products with ChangeNotifier {
 
     _products[index] = updatedProduct;
 
-    final url = Uri.parse('$_baseUrl/$productId.json');
+    final url = Uri.parse('$_baseUrl/$productId.json?auth=$_authToken');
 
     await http.patch(url, body: json.encode(Product.toMap(updatedProduct)));
 
@@ -83,7 +86,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String productId) async {
-    final url = Uri.parse('$_baseUrl/$productId.json');
+    final url = Uri.parse('$_baseUrl/$productId.json?auth=$_authToken');
 
     try {
       await http.delete(url);
