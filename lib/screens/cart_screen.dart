@@ -37,16 +37,10 @@ class CartScreen extends StatelessWidget {
                   backgroundColor: Theme.of(context).primaryColor,
                 ),
                 const SizedBox(width: 4),
-                TextButton(
-                    onPressed: () {
-                      Provider.of<Orders>(context, listen: false).addOrder(
-                        cart.items.values.toList(),
-                        cart.totalAmount,
-                      );
-
-                      cart.clearCart();
-                    },
-                    child: const Text('Order Now')),
+                _OrderNowButton(
+                  cart: cart,
+                  text: 'ORDER NOW',
+                ),
               ],
             ),
           ),
@@ -66,6 +60,51 @@ class CartScreen extends StatelessWidget {
           ),
         )
       ]),
+    );
+  }
+}
+
+class _OrderNowButton extends StatefulWidget {
+  const _OrderNowButton({
+    Key? key,
+    required this.cart,
+    required this.text,
+  }) : super(key: key);
+
+  final Cart cart;
+  final String text;
+
+  @override
+  State<_OrderNowButton> createState() => _OrderNowButtonState();
+}
+
+class _OrderNowButtonState extends State<_OrderNowButton> {
+  bool _isLoading = false;
+
+  Future<void> orderHandler(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Provider.of<Orders>(context, listen: false).addOrder(
+      widget.cart.items.values.toList(),
+      widget.cart.totalAmount,
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    widget.cart.clearCart();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final shouldDisable = widget.cart.totalAmount <= 0 || _isLoading;
+
+    return TextButton(
+      onPressed: shouldDisable ? null : () => orderHandler(context),
+      child: _isLoading ? const CircularProgressIndicator() : Text(widget.text),
     );
   }
 }

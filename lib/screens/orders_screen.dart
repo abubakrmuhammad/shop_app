@@ -3,13 +3,40 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/orders.dart';
-import 'package:shop_app/widgets/main_drawer.dart';
 
-class OrdersScreen extends StatelessWidget {
+import '../providers/orders.dart';
+import '../widgets/main_drawer.dart';
+
+class OrdersScreen extends StatefulWidget {
   static const routeName = '/orders';
 
   const OrdersScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OrdersScreen> createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    fetchOrders();
+
+    super.initState();
+  }
+
+  void fetchOrders() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +47,17 @@ class OrdersScreen extends StatelessWidget {
         title: const Text('Your Orders'),
       ),
       drawer: const MainDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-        child: ListView.builder(
-          itemCount: orders.length,
-          itemBuilder: (context, i) => _OrderItem(orders[i]),
-        ),
-      ),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+              child: ListView.builder(
+                itemCount: orders.length,
+                itemBuilder: (context, i) => _OrderItem(orders[i]),
+              ),
+            ),
     );
   }
 }

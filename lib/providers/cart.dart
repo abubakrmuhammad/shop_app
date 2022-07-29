@@ -14,6 +14,24 @@ class CartItem {
     required this.price,
     required this.quantity,
   });
+
+  static Map<String, dynamic> toMap(CartItem item) {
+    return {
+      'id': item.id,
+      'title': item.title,
+      'price': item.price,
+      'quantity': item.quantity,
+    };
+  }
+
+  static CartItem fromMap(map) {
+    return CartItem(
+      id: map['id'],
+      title: map['title'],
+      price: map['price'],
+      quantity: map['quantity'],
+    );
+  }
 }
 
 class Cart with ChangeNotifier {
