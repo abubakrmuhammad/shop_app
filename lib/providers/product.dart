@@ -41,6 +41,16 @@ class Product with ChangeNotifier {
         imageUrl = imageUrl ?? existingProduct.imageUrl,
         isFavorite = isFavorite ?? existingProduct.isFavorite;
 
+  static Map<String, dynamic> toMap(Product product) {
+    return {
+      'title': product.title,
+      'price': product.price,
+      'description': product.description,
+      'imageUrl': product.imageUrl,
+      'isFavorite': product.isFavorite,
+    };
+  }
+
   void toggleFavoriteStatus() {
     isFavorite = !isFavorite;
 

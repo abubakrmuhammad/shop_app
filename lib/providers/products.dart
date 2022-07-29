@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 
 import 'product.dart';
 
+const baseUrl =
+    'https://shop-app-flutterino-default-rtdb.europe-west1.firebasedatabase.app/products';
+
 class Products with ChangeNotifier {
   List<Product> _products = [];
 
@@ -19,25 +22,26 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse(
-        'https://shop-app-flutterino-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+    final url = Uri.parse('$baseUrl.json');
 
     try {
       final res = await http.get(url);
-      final productsData = json.decode(res.body) as Map<String, dynamic>;
+      final productsData = json.decode(res.body) as Map<String, dynamic>?;
       final List<Product> loadedProducts = [];
 
-      productsData.forEach((productId, data) {
-        final product = Product(
-          id: productId,
-          title: data['title'],
-          description: data['description'],
-          price: data['price'],
-          imageUrl: data['imageUrl'],
-        );
+      if (productsData != null) {
+        productsData.forEach((productId, data) {
+          final product = Product(
+            id: productId,
+            title: data['title'],
+            description: data['description'],
+            price: data['price'],
+            imageUrl: data['imageUrl'],
+          );
 
-        loadedProducts.add(product);
-      });
+          loadedProducts.add(product);
+        });
+      }
 
       _products = loadedProducts;
 
@@ -50,12 +54,7 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
         "https://shop-app-flutterino-default-rtdb.europe-west1.firebasedatabase.app/products.json");
-    final productJson = json.encode({
-      'title': product.title,
-      'price': product.price,
-      'description': product.description,
-      'imageUrl': product.imageUrl,
-    });
+    final productJson = json.encode(Product.toMap(product));
 
     try {
       final response = await http.post(url, body: productJson);
@@ -71,16 +70,27 @@ class Products with ChangeNotifier {
     }
   }
 
-  void updateProduct(String productId, Product updatedProduct) {
+  Future<void> updateProduct(String productId, Product updatedProduct) async {
     final index = _products.indexWhere((p) => p.id == productId);
 
     _products[index] = updatedProduct;
 
+    final url = Uri.parse('$baseUrl/$productId.json');
+
+    await http.patch(url, body: json.encode(Product.toMap(updatedProduct)));
+
     notifyListeners();
   }
 
-  void deleteProduct(String productId) {
-    _products.removeWhere((p) => p.id == productId);
+  Future<void> deleteProduct(String productId) async {
+    final url = Uri.parse('$baseUrl/$productId.json');
+
+    try {
+      await http.delete(url);
+      _products.removeWhere((p) => p.id == productId);
+    } catch (e) {
+      rethrow;
+    }
 
     notifyListeners();
   }
