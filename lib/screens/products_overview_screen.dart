@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/widgets/main_drawer.dart';
 
+import '../providers/products.dart';
 import '../providers/cart.dart';
+
 import '../screens/cart_screen.dart';
+
+import '../widgets/main_drawer.dart';
 import '../widgets/badge.dart';
 import '../widgets/products_grid.dart';
 
@@ -19,7 +22,26 @@ class ProductOverviewScreen extends StatefulWidget {
 }
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
-  bool showFavsOnly = false;
+  bool _showFavsOnly = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    fetchProducts();
+    super.initState();
+  }
+
+  void fetchProducts() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +65,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           PopupMenuButton(
               onSelected: (_FilterOptions value) {
                 setState(() {
-                  showFavsOnly = value == _FilterOptions.favorites;
+                  _showFavsOnly = value == _FilterOptions.favorites;
                 });
               },
               itemBuilder: (ctx) => [
@@ -59,7 +81,9 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: const MainDrawer(),
-      body: ProductsGrid(showFavsOnly),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ProductsGrid(_showFavsOnly),
     );
   }
 }
