@@ -66,13 +66,17 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final String? _authToken;
+
+  Orders() : _authToken = null;
+  Orders.update(this._authToken, this._orders);
 
   List<OrderItem> get orders {
     return UnmodifiableListView(_orders);
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url = Uri.parse('$_baseUrl.json');
+    final url = Uri.parse('$_baseUrl.json?auth=$_authToken');
     final response = await http.get(url);
 
     final ordersData = json.decode(response.body) as Map<String, dynamic>?;
@@ -99,7 +103,7 @@ class Orders with ChangeNotifier {
       dateTime: DateTime.now(),
     );
 
-    final url = Uri.parse('$_baseUrl.json');
+    final url = Uri.parse('$_baseUrl.json?auth=$_authToken');
     final orderJson = json.encode(OrderItem.toMap(order));
 
     final response = await http.post(url, body: orderJson);

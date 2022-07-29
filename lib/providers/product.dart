@@ -57,14 +57,14 @@ class Product with ChangeNotifier {
     };
   }
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String? authToken) async {
     final oldStatus = isFavorite;
 
     isFavorite = !isFavorite;
 
     notifyListeners();
 
-    final url = Uri.parse('$_baseUrl/$id.json');
+    final url = Uri.parse('$_baseUrl/$id.json?auth=$authToken');
 
     try {
       await http.patch(url, body: json.encode(toMap(this)));
