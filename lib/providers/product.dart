@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 const _baseUrl =
-    'https://shop-app-flutterino-default-rtdb.europe-west1.firebasedatabase.app/products';
+    'https://shop-app-flutterino-default-rtdb.europe-west1.firebasedatabase.app/';
 
 class Product with ChangeNotifier {
   final String id;
@@ -53,21 +53,21 @@ class Product with ChangeNotifier {
       'price': product.price,
       'description': product.description,
       'imageUrl': product.imageUrl,
-      'isFavorite': product.isFavorite,
     };
   }
 
-  Future<void> toggleFavoriteStatus(String? authToken) async {
+  Future<void> toggleFavoriteStatus(String? authToken, String? userId) async {
     final oldStatus = isFavorite;
 
     isFavorite = !isFavorite;
 
     notifyListeners();
 
-    final url = Uri.parse('$_baseUrl/$id.json?auth=$authToken');
+    final url =
+        Uri.parse('$_baseUrl/userFavorites/$userId/$id.json?auth=$authToken');
 
     try {
-      await http.patch(url, body: json.encode(toMap(this)));
+      await http.put(url, body: json.encode(isFavorite));
     } catch (e) {
       isFavorite = oldStatus;
       notifyListeners();

@@ -12,9 +12,19 @@ const _baseUrl =
 class Products with ChangeNotifier {
   List<Product> _products = [];
   final String? _authToken;
+  final String? _userId;
 
-  Products() : _authToken = null;
-  Products.update(this._authToken, this._products);
+  Products()
+      : _authToken = null,
+        _userId = null;
+
+  Products.update({
+    required String? authToken,
+    required String? userId,
+    required List<Product> products,
+  })  : _products = products,
+        _authToken = authToken,
+        _userId = userId;
 
   UnmodifiableListView<Product> get products => UnmodifiableListView(_products);
 
@@ -33,6 +43,12 @@ class Products with ChangeNotifier {
       final productsData = json.decode(res.body) as Map<String, dynamic>?;
       final List<Product> loadedProducts = [];
 
+      final favoritesUrl = Uri.parse(
+          "https://shop-app-flutterino-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$_userId.json?auth=$_authToken");
+
+      final favoritesRes = await http.get(favoritesUrl);
+      final favoritesData = json.decode(favoritesRes.body);
+
       if (productsData != null) {
         productsData.forEach((productId, data) {
           final product = Product(
@@ -41,6 +57,9 @@ class Products with ChangeNotifier {
             description: data['description'],
             price: data['price'],
             imageUrl: data['imageUrl'],
+            isFavorite: favoritesData == null
+                ? false
+                : favoritesData[productId] ?? false,
           );
 
           loadedProducts.add(product);

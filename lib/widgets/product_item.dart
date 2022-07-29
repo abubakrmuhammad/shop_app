@@ -14,7 +14,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
     final cart = Provider.of<Cart>(context);
-    final authToken = Provider.of<Auth>(context, listen: false).token;
+    final auth = Provider.of<Auth>(context, listen: false);
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -24,7 +24,8 @@ class ProductItem extends StatelessWidget {
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           leading: IconButton(
-            onPressed: () => product.toggleFavoriteStatus(authToken),
+            onPressed: () =>
+                product.toggleFavoriteStatus(auth.token, auth.userId),
             icon: Icon(
               product.isFavorite ? Icons.favorite : Icons.favorite_border,
             ),
