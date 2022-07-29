@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+const _baseUrl =
+    'https://shop-app-flutterino-default-rtdb.europe-west1.firebasedatabase.app/products';
 
 class Product with ChangeNotifier {
   final String id;
@@ -51,9 +57,20 @@ class Product with ChangeNotifier {
     };
   }
 
-  void toggleFavoriteStatus() {
+  Future<void> toggleFavoriteStatus() async {
+    final oldStatus = isFavorite;
+
     isFavorite = !isFavorite;
 
     notifyListeners();
+
+    final url = Uri.parse('$_baseUrl/$id.json');
+
+    try {
+      await http.patch(url, body: json.encode(toMap(this)));
+    } catch (e) {
+      isFavorite = oldStatus;
+      notifyListeners();
+    }
   }
 }

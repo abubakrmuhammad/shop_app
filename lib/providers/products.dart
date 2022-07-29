@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 import 'product.dart';
 
-const baseUrl =
+const _baseUrl =
     'https://shop-app-flutterino-default-rtdb.europe-west1.firebasedatabase.app/products';
 
 class Products with ChangeNotifier {
@@ -22,7 +22,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse('$baseUrl.json');
+    final url = Uri.parse('$_baseUrl.json');
 
     try {
       final res = await http.get(url);
@@ -75,7 +75,7 @@ class Products with ChangeNotifier {
 
     _products[index] = updatedProduct;
 
-    final url = Uri.parse('$baseUrl/$productId.json');
+    final url = Uri.parse('$_baseUrl/$productId.json');
 
     await http.patch(url, body: json.encode(Product.toMap(updatedProduct)));
 
@@ -83,7 +83,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String productId) async {
-    final url = Uri.parse('$baseUrl/$productId.json');
+    final url = Uri.parse('$_baseUrl/$productId.json');
 
     try {
       await http.delete(url);
