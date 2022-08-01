@@ -6,6 +6,7 @@ import './providers/products.dart';
 import './providers/cart.dart';
 import './providers/orders.dart';
 
+import './screens/splash_screen.dart';
 import './screens/orders_screen.dart';
 import './screens/product_details_screen.dart';
 import './screens/products_overview_screen.dart';
@@ -52,7 +53,13 @@ class MyApp extends StatelessWidget {
               ),
               home: auth.isAuthenticated
                   ? const ProductOverviewScreen()
-                  : const AuthScreen(),
+                  : FutureBuilder(
+                      future: auth.tryAutoLogin(),
+                      builder: (context, authResult) =>
+                          authResult.connectionState == ConnectionState.waiting
+                              ? const SplashScreen()
+                              : const AuthScreen(),
+                    ),
               routes: {
                 ProductOverviewScreen.routeName: (ctx) =>
                     const ProductOverviewScreen(),
