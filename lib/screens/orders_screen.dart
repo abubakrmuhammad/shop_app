@@ -80,7 +80,7 @@ class _OrderItemState extends State<_OrderItem> {
       child: Column(
         children: [
           ListTile(
-            title: Text('\$${widget.order.amount}'),
+            title: Text('\$${widget.order.amount.toStringAsFixed(2)}'),
             subtitle: Text(
                 DateFormat('dd MM yyyy hh:mm').format(widget.order.dateTime)),
             trailing: IconButton(
