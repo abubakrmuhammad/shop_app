@@ -35,8 +35,10 @@ class Products with ChangeNotifier {
     return _products.firstWhere((product) => product.id == id);
   }
 
-  Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse('$_baseUrl.json?auth=$_authToken');
+  Future<void> fetchAndSetProducts({bool filterByUser = false}) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$_userId"' : '';
+    final url = Uri.parse('$_baseUrl.json?auth=$_authToken&$filterString');
 
     try {
       final res = await http.get(url);
@@ -76,7 +78,9 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse('$_baseUrl.json?auth=$_authToken');
-    final productJson = json.encode(Product.toMap(product));
+    final productWithUserId =
+        Product.fromExistingProduct(product, creatorId: _userId);
+    final productJson = json.encode(Product.toMap(productWithUserId));
 
     try {
       final response = await http.post(url, body: productJson);

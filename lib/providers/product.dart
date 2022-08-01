@@ -13,6 +13,7 @@ class Product with ChangeNotifier {
   final double price;
   final String imageUrl;
   bool isFavorite;
+  final String? creatorId;
 
   Product({
     required this.id,
@@ -20,6 +21,7 @@ class Product with ChangeNotifier {
     required this.description,
     required this.price,
     required this.imageUrl,
+    this.creatorId,
     this.isFavorite = false,
   });
 
@@ -30,7 +32,7 @@ class Product with ChangeNotifier {
     this.price = 0.0,
     this.imageUrl = '',
     this.isFavorite = false,
-  });
+  }) : creatorId = null;
 
   Product.fromExistingProduct(
     Product existingProduct, {
@@ -40,12 +42,14 @@ class Product with ChangeNotifier {
     double? price,
     String? imageUrl,
     bool? isFavorite,
+    String? creatorId,
   })  : id = id ?? existingProduct.id,
         title = title ?? existingProduct.title,
         description = description ?? existingProduct.description,
         price = price ?? existingProduct.price,
         imageUrl = imageUrl ?? existingProduct.imageUrl,
-        isFavorite = isFavorite ?? existingProduct.isFavorite;
+        isFavorite = isFavorite ?? existingProduct.isFavorite,
+        creatorId = creatorId ?? existingProduct.creatorId;
 
   static Map<String, dynamic> toMap(Product product) {
     return {
@@ -53,6 +57,7 @@ class Product with ChangeNotifier {
       'price': product.price,
       'description': product.description,
       'imageUrl': product.imageUrl,
+      'creatorId': product.creatorId,
     };
   }
 
